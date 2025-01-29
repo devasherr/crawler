@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
+	"github.com/spf13/pflag"
 )
 
 func traverse(folderPath, target string) string {
@@ -35,10 +37,24 @@ func traverse(folderPath, target string) string {
 }
 
 func main() {
-	folderName, err := os.Getwd()
+	var flatType string
+	pflag.StringVarP(&flatType, "type", "t", "", "operate on folder or file")
+	pflag.Parse()
+
+	if len(pflag.Args()) == 0 {
+		fmt.Println("no target provided")
+		return
+	}
+
+	if len(pflag.Args()) == 0 {
+		fmt.Println("too many targets provided")
+		return
+	}
+
+	folderPath, err := os.Getwd()
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(traverse(folderName, "abs"))
+	fmt.Println(traverse(folderPath, pflag.Args()[0]))
 }
