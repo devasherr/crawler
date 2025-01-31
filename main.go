@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-func traverse(folderPath, target string) string {
+func traverse(folderPath, target, searchType string) string {
 	directories, err := os.ReadDir(folderPath)
 	if err != nil {
 		return ""
@@ -20,14 +20,21 @@ func traverse(folderPath, target string) string {
 
 		if dir.IsDir() {
 			if dir.Name() == target {
-				return nextDir
+				if searchType == "any" || searchType == "folder" {
+					return nextDir
+				}
 			}
-			curRes := traverse(nextDir, target)
+			curRes := traverse(nextDir, target, searchType)
 			if len(curRes) > 1 {
 				result = curRes
 			}
 		} else {
 			if dir.Name() == target {
+				if searchType == "any" || searchType == "file" {
+					return nextDir
+				}
+			}
+			if searchType == "file" && dir.Name() == target {
 				return nextDir
 			}
 		}
@@ -37,8 +44,8 @@ func traverse(folderPath, target string) string {
 }
 
 func main() {
-	var flatType string
-	pflag.StringVarP(&flatType, "type", "t", "", "operate on folder or file")
+	var searchType string
+	pflag.StringVarP(&searchType, "type", "t", "any", "operate on folder or file")
 	pflag.Parse()
 
 	if len(pflag.Args()) == 0 {
@@ -56,5 +63,5 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(traverse(folderPath, pflag.Args()[0]))
+	fmt.Printf(">> %s", traverse(folderPath, pflag.Args()[0], searchType))
 }
