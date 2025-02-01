@@ -8,6 +8,9 @@ import (
 	"github.com/spf13/pflag"
 )
 
+type searchInfo struct {
+}
+
 func traverse(folderPath, target, searchType string, prefix bool, avoidFilesMap map[string]bool, prefixMatch *[]string) string {
 	directories, err := os.ReadDir(folderPath)
 	if err != nil {
@@ -89,7 +92,7 @@ func main() {
 		return
 	}
 
-	if len(pflag.Args()) == 0 {
+	if len(pflag.Args()) > 1 {
 		fmt.Println("too many targets provided")
 		return
 	}
