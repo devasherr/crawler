@@ -117,5 +117,7 @@ func main() {
 				}
 			}
 		}
+	} else {
+		fmt.Println(">> ", result)
 	}
 }
